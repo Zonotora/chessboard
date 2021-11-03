@@ -20,30 +20,7 @@ export const createSvgElement = (elem, attributes = {}, parent = undefined) => {
 };
 
 export const createSvg = (attributes = {}) => {
-  const svg = createSvgElement("svg", attributes);
-
-  // create refs
-  // arrow head
-  const marker = createSvgElement(
-    "marker",
-    {
-      id: "arrow",
-      viewBox: "0 0 30 30",
-      refX: "5",
-      refY: "5",
-      markerWidth: "6",
-      markerHeight: "6",
-      orient: "auto-start-reverse",
-    },
-    svg
-  );
-  createSvgElement(
-    "path",
-    { d: "M 0 0 L 10 5 L 0 10 z", fill: "#fcba03" },
-    marker
-  );
-
-  return svg;
+  return createSvgElement("svg", attributes);
 };
 
 export const createPiece = (name, attributes = {}, parent = undefined) => {
@@ -62,18 +39,43 @@ export const createArrow = (
   attributes = {},
   parent = undefined
 ) => {
-  return createSvgElement(
-    "line",
+  const g = createSvgElement("g", null, parent);
+
+  const xx1 = x1 + 0.5;
+  const yy1 = y1 + 0.5;
+  const xx2 = x2 + 0.5;
+  const yy2 = y2 + 0.5;
+
+  const h = 0.5;
+  const w = 0.3;
+  const xDiff = xx2 - xx1;
+  const yDiff = yy2 - yy1;
+  const mag = Math.sqrt(xDiff * xDiff + yDiff * yDiff);
+  const p1 = [xDiff / mag, yDiff / mag];
+  const p2 = [-p1[1] * w, p1[0] * w];
+
+  createSvgElement(
+    "path",
     {
-      x1: x1 + 0.5,
-      y1: y1 + 0.5,
-      x2: x2 + 0.5,
-      y2: y2 + 0.5,
+      d: `M${xx1},${yy1} L${xx2 - p1[0] * h}, ${yy2 - p1[1] * h}`,
       stroke: "#fcba038f",
       "stroke-width": "0.25",
-      "marker-end": "url(#arrow)",
       ...attributes,
     },
-    parent
+    g
   );
+
+  createSvgElement(
+    "path",
+    {
+      d: `M${xx2 - p1[0] * h}, ${yy2 - p1[1] * h} m${p2[0]}, ${p2[1]} l${
+        -2 * p2[0]
+      }, ${-2 * p2[1]} L${xx2}, ${yy2}  z`,
+      fill: "#fcba038f",
+      ...attributes,
+    },
+    g
+  );
+
+  return g;
 };
