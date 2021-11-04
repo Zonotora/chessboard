@@ -69,7 +69,7 @@ export class Chessboard {
     const t = this.arrow();
   }
 
-  arrow = (from, to) => {
-    return createArrow(0, 2, 7, 4, null, this.board);
+  arrow = (from, to, color = "#fcba038f") => {
+    return createArrow(2, 3, 1, 1, { fill: color, stroke: color }, this.board);
   };
 }
